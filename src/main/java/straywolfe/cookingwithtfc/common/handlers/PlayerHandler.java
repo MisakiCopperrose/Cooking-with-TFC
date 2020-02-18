@@ -212,25 +212,6 @@ public class PlayerHandler
 					}
 				}
 			}
-			
-			//Replace TFC hopper with CWTFC hopper
-			/*if(itemInHand.getItem() == Item.getItemFromBlock(TFCBlocks.hopper))
-			{
-				event.setCanceled(true);
-				switch(event.face)
-				{
-					case 0: world.setBlock(x, y - 1, z, CWTFCBlocks.hopperCWTFC, 0, 3); break;
-					case 1: world.setBlock(x, y + 1, z, CWTFCBlocks.hopperCWTFC, 0, 3); break;
-					case 2: world.setBlock(x, y, z - 1, CWTFCBlocks.hopperCWTFC, 0, 3); break;
-					case 3: world.setBlock(x, y, z + 1, CWTFCBlocks.hopperCWTFC, 0, 3); break;
-					case 4: world.setBlock(x - 1, y, z, CWTFCBlocks.hopperCWTFC, 0, 3); break;
-					case 5: world.setBlock(x + 1, y, z, CWTFCBlocks.hopperCWTFC, 0, 3); break;
-					default: break;
-				}			
-				
-				event.entityPlayer.setCurrentItemOrArmor(0, null);
-				return;
-			}*/
 		}
 	}
 	

@@ -10,7 +10,6 @@ public class CWTFCBlocks
 {
 	public static Block GrainsBlock;
 	public static Block mixingBowl;
-	public static Block hopperCWTFC;
 	public static Block cookingPot;
 	public static Block meatCWTFC;
 	public static Block sandwichCWTFC;
@@ -68,7 +67,6 @@ public class CWTFCBlocks
 	{
 		GrainsBlock = new BlockGrains();
 		mixingBowl = new BlockMixBowl();
-		hopperCWTFC = new BlockHopperCWTFC();
 		cookingPot = new BlockCookingPot();
 		meatCWTFC = new BlockMeat();
 		sandwichCWTFC = new BlockSandwich();
@@ -103,7 +101,6 @@ public class CWTFCBlocks
 	{
 		GameRegistry.registerBlock(GrainsBlock, "GrainsBlock");
 		GameRegistry.registerBlock(mixingBowl, ItemMixingBowl.class, "MixingBowl");
-		GameRegistry.registerBlock(hopperCWTFC, "Hopper");
 		GameRegistry.registerBlock(cookingPot, "CookingPot");
 		GameRegistry.registerBlock(meatCWTFC, "meatCWTFC");
 		GameRegistry.registerBlock(sandwichCWTFC, "sandwichCWTFC");

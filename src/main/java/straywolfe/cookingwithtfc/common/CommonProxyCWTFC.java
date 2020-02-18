@@ -24,7 +24,6 @@ public class CommonProxyCWTFC
 	{		
 		GameRegistry.registerTileEntity(TileGrains.class, "TileGrains");
 		GameRegistry.registerTileEntity(TileMixBowl.class, "TileMixBowl");
-		GameRegistry.registerTileEntity(TileHopperCWTFC.class, "TileHopperCWTFC");
 		GameRegistry.registerTileEntity(TileBowl.class, "TileBowl");
 		GameRegistry.registerTileEntity(TileMeat.class, "TileMeat");
 		GameRegistry.registerTileEntity(TileCookingPot.class, "TileCookingPot");

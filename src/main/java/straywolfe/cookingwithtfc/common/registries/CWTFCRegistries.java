@@ -8,7 +8,6 @@ import com.dunk.tfc.Core.Recipes;
 import com.dunk.tfc.Food.ItemFoodTFC;
 import com.dunk.tfc.Handlers.TFCFuelHandler;
 import com.dunk.tfc.api.TFCBlocks;
-import com.dunk.tfc.api.TFCFluids;
 import com.dunk.tfc.api.TFCItems;
 import com.dunk.tfc.api.Constant.Global;
 import com.dunk.tfc.api.Crafting.CraftingManagerTFC;
@@ -29,13 +28,10 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import straywolfe.cookingwithtfc.api.CWTFCBlocks;
 import straywolfe.cookingwithtfc.api.CWTFCItems;
-import straywolfe.cookingwithtfc.api.managers.PressManager;
-import straywolfe.cookingwithtfc.api.managers.PressRecipe;
 import straywolfe.cookingwithtfc.common.core.helper.Helper;
 import straywolfe.cookingwithtfc.common.lib.Constants;
 import straywolfe.cookingwithtfc.common.lib.Settings;
 import terramisc.core.TFCMBlocks;
-import terramisc.core.TFCMFluids;
 
 public class CWTFCRegistries 
 {
@@ -47,7 +43,6 @@ public class CWTFCRegistries
 		registerQuernRecipes();
 		registerKilnRecipes();
 		registerKnappingRecipes();
-		registerPressRecipes();
 		CWTFCFoodRecipes.Recipes();
 		PlantRegistry.registerCrops();
 		PlantRegistry.registerFruitTrees();
@@ -187,32 +182,8 @@ public class CWTFCRegistries
 				"     ",
 				"     ", '#', new ItemStack(TFCItems.flatClay, 1, 1)});
 	}
-	
-	protected static void registerPressRecipes()
-	{
-		PressManager pressmanager = PressManager.getInstance();
-		
-		pressmanager.addRecipe(new PressRecipe(TFCItems.olive, TFCFluids.OLIVEOIL, 1));
-		
-		if(Helper.isReqModVersion("tfcm", "0.10.0"))
-		{					
-			pressmanager.addRecipe(new PressRecipe(TFCItems.cherry, TFCMFluids.REDFRUITJUICE, 8));
-			pressmanager.addRecipe(new PressRecipe(TFCItems.plum, TFCMFluids.REDFRUITJUICE, 8));
-			pressmanager.addRecipe(new PressRecipe(TFCItems.wintergreenBerry, TFCMFluids.REDFRUITJUICE, 8));
-			pressmanager.addRecipe(new PressRecipe(TFCItems.blueberry, TFCMFluids.REDFRUITJUICE, 8));
-			pressmanager.addRecipe(new PressRecipe(TFCItems.raspberry, TFCMFluids.REDFRUITJUICE, 8));
-			pressmanager.addRecipe(new PressRecipe(TFCItems.strawberry, TFCMFluids.REDFRUITJUICE, 8));
-			pressmanager.addRecipe(new PressRecipe(TFCItems.blackberry, TFCMFluids.REDFRUITJUICE, 8));
-			pressmanager.addRecipe(new PressRecipe(TFCItems.bunchberry, TFCMFluids.REDFRUITJUICE, 8));
-			pressmanager.addRecipe(new PressRecipe(TFCItems.cranberry, TFCMFluids.REDFRUITJUICE, 8));
-			pressmanager.addRecipe(new PressRecipe(TFCItems.snowberry, TFCMFluids.REDFRUITJUICE, 8));
-			pressmanager.addRecipe(new PressRecipe(TFCItems.elderberry, TFCMFluids.REDFRUITJUICE, 8));
-			pressmanager.addRecipe(new PressRecipe(TFCItems.gooseberry, TFCMFluids.REDFRUITJUICE, 8));
-			pressmanager.addRecipe(new PressRecipe(TFCItems.cloudberry, TFCMFluids.REDFRUITJUICE, 8));
-		}
-	}
-	
-	protected static void removeQuernRecipe(ItemStack inputStack, ItemStack outputStack)
+
+		protected static void removeQuernRecipe(ItemStack inputStack, ItemStack outputStack)
 	{
 		List<QuernRecipe> quernList = QuernManager.getInstance().getRecipes();
 		for (int i = 0; i < quernList.size(); i++)
@@ -223,7 +194,7 @@ public class CWTFCRegistries
 					quernList.remove(i--);
 			}
 		}
-		
+
 		if(QuernManager.getInstance().findMatchingRecipe(inputStack) == null && QuernManager.getInstance().isValidItem(inputStack))
 		{
 			List<ItemStack> validItemsList = QuernManager.getInstance().getValidItems();

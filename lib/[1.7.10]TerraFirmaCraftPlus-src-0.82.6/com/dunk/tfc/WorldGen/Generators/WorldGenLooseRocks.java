@@ -1,0 +1,204 @@
+package com.dunk.tfc.WorldGen.Generators;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+import com.dunk.tfc.Blocks.Terrain.BlockOre;
+import com.dunk.tfc.Core.TFC_Climate;
+import com.dunk.tfc.Core.TFC_Core;
+import com.dunk.tfc.TileEntities.TEWorldItem;
+import com.dunk.tfc.WorldGen.DataLayer;
+import com.dunk.tfc.WorldGen.TFCBiome;
+import com.dunk.tfc.api.TFCBlocks;
+import com.dunk.tfc.api.TFCItems;
+import com.dunk.tfc.api.Constant.Global;
+
+import cpw.mods.fml.common.IWorldGenerator;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunkProvider;
+
+public class WorldGenLooseRocks implements IWorldGenerator
+{
+	public WorldGenLooseRocks()
+	{
+	}
+
+	private boolean generateRocks(World world, Random random, int i, int j, int k)
+	{
+		if ((world.isAirBlock(i, j + 1, k) || world.getBlock(i, j + 1, k) == Blocks.snow || world.getBlock(i, j + 1,
+				k) == TFCBlocks.tallGrass) && (world.getBlock(i, j, k).getMaterial() == Material.grass || world
+						.getBlock(i, j, k).getMaterial() == Material.rock) && world.getBlock(i, j, k).isOpaqueCube())
+		{
+			if (world.setBlock(i, j + 1, k, TFCBlocks.worldItem, 0, 2))
+			{
+				TEWorldItem te = (TEWorldItem) world.getTileEntity(i, j + 1, k);
+				ItemStack sample = getCoreSample(world, i, j, k);
+				if (world.rand.nextInt(3) == 0 && sample != null)
+				{
+					te.storage[0] = sample;
+				}
+				else
+				{
+					DataLayer dl = TFC_Climate.getRockLayer(world, i, j, k, 0);
+					// BlockMeta rockLayer = new BlockMeta(dl.block, dl.data2);
+					te.storage[0] = new ItemStack(TFCItems.looseRock, 1, dl.data1);
+				}
+			}
+		}
+		return true;
+	}
+
+	private ItemStack getCoreSample(World world, int xCoord, int yCoord, int zCoord)
+	{
+		ArrayList<Item> coreSample = new ArrayList<Item>();
+		ArrayList<ItemStack> coreSampleStacks = new ArrayList<ItemStack>();
+		for (int x = -15; x < 16; x++)
+		{
+			for (int z = -15; z < 16; z++)
+			{
+				for (int y = yCoord; y > yCoord - 35; y--)
+				{
+					if (world.blockExists(xCoord + x, y, zCoord + z))
+					{
+						Block b = world.getBlock(xCoord + x, y, zCoord + z);
+
+						if (TFC_Core.isOre(b))
+						{
+							int m = world.getBlockMetadata(xCoord + x, y, zCoord + z);
+							m += ((BlockOre) b).damageOffset;
+							if (!coreSample.contains(((BlockOre) b).getDroppedItem(m)))
+							{
+								if (m != 14 && m != 15)
+								{
+									coreSample.add(((BlockOre) b).getDroppedItem(m));
+									coreSampleStacks.add(new ItemStack(((BlockOre) b).getDroppedItem(m), 1, m));
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if (!coreSampleStacks.isEmpty())
+			return coreSampleStacks.get(world.rand.nextInt(coreSampleStacks.size()));
+		return null;
+	}
+
+	@Override
+	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
+			IChunkProvider chunkProvider)
+	{
+		chunkX *= 16;
+		chunkZ *= 16;
+
+		if (world.getBiomeGenForCoords(chunkX, chunkZ) instanceof TFCBiome) // Fixes
+																			// ClassCastException
+		{
+			TFCBiome biome = (TFCBiome) world.getBiomeGenForCoords(chunkX, chunkZ);
+			if (biome == TFCBiome.OCEAN || biome == TFCBiome.DEEP_OCEAN)
+				return;
+		}
+
+		// rocks/ore
+		for (int itemCount = 0; itemCount < 8; itemCount++)
+		{
+			int xCoord = chunkX + random.nextInt(16) + 8;
+			int zCoord = chunkZ + random.nextInt(16) + 8;
+			generateRocks(world, random, xCoord, world.getTopSolidOrLiquidBlock(xCoord, zCoord) - 1, zCoord);
+		}
+
+		// sticks
+		for (int stickCount = 0; stickCount < 5; stickCount++)
+		{
+			int xCoord = chunkX + random.nextInt(16) + 8;
+			int zCoord = chunkZ + random.nextInt(16) + 8;
+			generateSticks(world, random, xCoord, world.getTopSolidOrLiquidBlock(xCoord, zCoord) - 1, zCoord);
+		}
+
+		// shells
+		for (int stickCount = 0; stickCount < 1; stickCount++)
+		{
+			int xCoord = chunkX + random.nextInt(16) + 8;
+			int zCoord = chunkZ + random.nextInt(16) + 8;
+			generateShells(world, random, xCoord, world.getTopSolidOrLiquidBlock(xCoord, zCoord) - 1, zCoord);
+		}
+	}
+
+	private boolean generateShells(World world, Random random, int i, int j, int k)
+	{
+		if (j < Global.SEALEVEL + 3)
+		{
+			if ((world.isAirBlock(i, j + 1, k) || world.getBlock(i, j + 1, k) == Blocks.snow || world.getBlock(i, j + 1,
+					k) == TFCBlocks.tallGrass) && (world.getBlock(i, j, k).getMaterial() == Material.sand || world
+							.getBlock(i, j, k).getMaterial() == Material.ground) && world.getBlock(i, j, k)
+									.isOpaqueCube())
+			{
+				if (world.getBiomeGenForCoords(i, k) instanceof TFCBiome) // Fixes
+																			// ClassCastException
+				{
+					TFCBiome biome = (TFCBiome) world.getBiomeGenForCoords(i, k);
+					if ((biome == TFCBiome.DEEP_OCEAN || biome == TFCBiome.BEACH || biome == TFCBiome.GRAVEL_BEACH || biome == TFCBiome.OCEAN) && world
+							.setBlock(i, j + 1, k, TFCBlocks.worldItem, 0, 2))
+					{
+						TEWorldItem te = (TEWorldItem) world.getTileEntity(i, j + 1, k);
+						// BlockMeta rockLayer = TFC_Climate.getRockLayer(i, j,
+						// k,
+						// 0);
+						int d = random.nextInt(2);
+						te.storage[0] = new ItemStack(TFCItems.seashell, 1, d);
+						te.setRotation(random.nextInt(4));
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	private boolean generateSticks(World world, Random random, int i, int j, int k)
+	{
+		if ((world.isAirBlock(i, j + 1, k) || world.getBlock(i, j + 1, k) == Blocks.snow || world.getBlock(i, j + 1,
+				k) == TFCBlocks.tallGrass) && (world.getBlock(i, j, k).getMaterial() == Material.grass || world
+						.getBlock(i, j, k).getMaterial() == Material.rock || world.getBlock(i, j, k)
+								.getMaterial() == Material.sand || world.getBlock(i, j, k)
+										.getMaterial() == Material.ground) && world.getBlock(i, j, k).isOpaqueCube())
+		{
+			if (world.getBiomeGenForCoords(i, k) instanceof TFCBiome) // Fixes
+																		// ClassCastException
+			{
+				TFCBiome biome = (TFCBiome) world.getBiomeGenForCoords(i, k);
+				if ((biome == TFCBiome.DEEP_OCEAN || biome == TFCBiome.BEACH || biome == TFCBiome.GRAVEL_BEACH || biome == TFCBiome.OCEAN || biome == TFCBiome.RIVER || isNearTree(
+						world, i, j, k)) && world.setBlock(i, j + 1, k, TFCBlocks.worldItem, 0, 2))
+				{
+					TEWorldItem te = (TEWorldItem) world.getTileEntity(i, j + 1, k);
+					// BlockMeta rockLayer = TFC_Climate.getRockLayer(i, j, k,
+					// 0);
+					te.storage[0] = new ItemStack(TFCItems.stick, 1);
+					te.setRotation(random.nextInt(4));
+				}
+			}
+		}
+		return true;
+	}
+
+	private boolean isNearTree(World world, int i, int j, int k)
+	{
+		if (world.getBlock(i, j + 3, k).getMaterial() == Material.leaves || world.getBlock(i + 5, j + 3, k)
+				.getMaterial() == Material.leaves || world.getBlock(i - 5, j + 3, k)
+						.getMaterial() == Material.leaves || world.getBlock(i, j + 3, k + 5)
+								.getMaterial() == Material.leaves || world.getBlock(i, j + 3, k - 5)
+										.getMaterial() == Material.leaves)
+			return true;
+		else
+			return world.getBlock(i, j + 6, k).getMaterial() == Material.leaves || world.getBlock(i + 5, j + 6, k)
+					.getMaterial() == Material.leaves || world.getBlock(i - 5, j + 6, k)
+							.getMaterial() == Material.leaves || world.getBlock(i, j + 6, k + 5)
+									.getMaterial() == Material.leaves || world.getBlock(i, j + 6, k - 5)
+											.getMaterial() == Material.leaves;
+	}
+
+}

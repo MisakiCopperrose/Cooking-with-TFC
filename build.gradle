@@ -79,7 +79,7 @@ task sourceJar(type: Jar) {
 tasks.build.dependsOn('sourceJar', 'deobfJar')
 
 dependencies {
-    compile fileTree(dir:'libs',include:'*.jar')
+    compile fileTree(dir:'lib',include:'*.jar')
 }
 
 processResources {

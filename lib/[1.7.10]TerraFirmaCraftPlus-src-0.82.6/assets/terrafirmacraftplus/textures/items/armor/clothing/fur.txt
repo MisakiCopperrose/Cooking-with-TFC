@@ -1,0 +1,1 @@
+HSL of fur from bearfur = 12, 114, 9 in p.NET
